@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plane Game</title>
+    <title>Plane Game !</title>
     <style>
         body {
             text-align: center;
-            background-image: url('https://cdn.pixabay.com/photo/2019/06/24/18/43/clouds-4292282_960_720.jpg'); 
+            background-image: url('https://wallpaperaccess.com/full/189332.jpg'); /* Chiroyli fon */
             background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
         }
         #gameArea {
             width: 300px;
-            height: 400px;
-            border: 2px solid black;
+            height: 500px;
+            border: 3px solid white;
             margin: auto;
             position: relative;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.7);
             overflow: hidden;
         }
         #plane {
@@ -24,188 +26,159 @@
             height: 60px;
             position: absolute;
             bottom: 10px;
-            left: 125px;
+            left: 120px;
         }
         .enemy {
             width: 50px;
             height: 50px;
             position: absolute;
-            background-image: url('https://cdn-icons-png.flaticon.com/512/747/747386.png'); 
-            background-size: cover;
+            top: 0;
         }
         .bullet {
-            width: 10px;
+            width: 8px;
             height: 20px;
-            background-color: yellow;
-            position: absolute;
-        }
-        .mega-bullet {
-            width: 20px;
-            height: 40px;
             background-color: red;
             position: absolute;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .control-btn {
+            width: 80px;
+            height: 50px;
+            font-size: 18px;
+            margin: 5px;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+        .control-btn:active {
+            background-color: #ff5722;
         }
         #score {
             font-size: 20px;
             margin-top: 10px;
-            color: white;
-        }
-        .button-container {
-            margin-top: 10px;
-        }
-        .control-btn {
-            width: 70px;
-            height: 40px;
-            font-size: 16px;
-            margin: 5px;
         }
     </style>
 </head>
 <body>
 
-    <h2 style="color: white;">Samolyotni boshqaring va dushmanlarni yo‘q qiling!</h2>
+    <h2>Samolyot O‘yini</h2>
     <div id="score">Ball: 0</div>
     <div id="gameArea">
-        <img id="plane" src="https://cdn-icons-png.flaticon.com/512/747/747374.png" alt="Samolyot"> 
+        <img id="plane" src="https://www.freeiconspng.com/uploads/fighter-jet-png-image-19.png" alt="Samolyot">
     </div>
 
     <div class="button-container">
-        <button class="control-btn" onclick="movePlane(-10)">Chap</button>
-        <button class="control-btn" onclick="movePlane(10)">O‘ng</button>
-        <button class="control-btn" onclick="fireBullet()">Fire</button>
-        <button class="control-btn" onclick="fireMegaBullet()">Mega Fire</button>
+        <button class="control-btn" onclick="moveLeft()">⬅️ Chap</button>
+        <button class="control-btn" onclick="moveRight()">O‘ng ➡️</button>
+        <button class="control-btn" onclick="fire()">🔥 Fire</button>
     </div>
 
     <script>
         let plane = document.getElementById("plane");
-        let scoreDisplay = document.getElementById("score");
         let gameArea = document.getElementById("gameArea");
-        let x = 125;
+        let scoreDisplay = document.getElementById("score");
         let score = 0;
-        let enemySpeed = 3000;
+        let x = 120;
+        let bullets = [];
+        let enemies = [];
 
-        let fireSound = new Audio('fire.mp3');
-        let explosionSound = new Audio('explosion.mp3');
-        let enemySound = new Audio('enemy-approaching.mp3');
-
-        function movePlane(dx) {
-            if (x + dx >= 0 && x + dx <= 240) x += dx;
-            plane.style.left = x + "px";
+        function moveLeft() {
+            if (x > 0) {
+                x -= 15;
+                plane.style.left = x + "px";
+            }
         }
 
-        document.addEventListener("keydown", function(event) {
-            if (event.key === "ArrowLeft") movePlane(-10);
-            if (event.key === "ArrowRight") movePlane(10);
-            if (event.key === " ") fireBullet();
-            if (event.key === "m") fireMegaBullet();
-        });
+        function moveRight() {
+            if (x < 240) {
+                x += 15;
+                plane.style.left = x + "px";
+            }
+        }
 
-        function fireBullet() {
-            fireSound.play();
+        function fire() {
             let bullet = document.createElement("div");
-            bullet.classList.add("bullet");
-            bullet.style.left = (x + 25) + "px";
+            bullet.className = "bullet";
+            bullet.style.left = (x + 26) + "px";
             bullet.style.bottom = "60px";
             gameArea.appendChild(bullet);
-            
+            bullets.push(bullet);
+            moveBullet(bullet);
+        }
+
+        function moveBullet(bullet) {
             let bulletInterval = setInterval(() => {
-                let bulletY = parseInt(bullet.style.bottom);
-                if (bulletY < 400) {
-                    bullet.style.bottom = bulletY + 5 + "px";
-                    checkBulletCollision(bullet, bulletInterval);
-                } else {
+                let bottom = parseInt(bullet.style.bottom);
+                if (bottom >= 500) {
                     clearInterval(bulletInterval);
                     bullet.remove();
+                } else {
+                    bullet.style.bottom = bottom + 10 + "px";
                 }
             }, 50);
         }
 
-        function fireMegaBullet() {
-            if (score >= 50) {
-                let megaBullet = document.createElement("div");
-                megaBullet.classList.add("mega-bullet");
-                megaBullet.style.left = (x + 25) + "px";
-                megaBullet.style.bottom = "60px";
-                gameArea.appendChild(megaBullet);
-
-                let bulletInterval = setInterval(() => {
-                    let bulletY = parseInt(megaBullet.style.bottom);
-                    if (bulletY < 400) {
-                        megaBullet.style.bottom = bulletY + 7 + "px";
-                        checkBulletCollision(megaBullet, bulletInterval);
-                    } else {
-                        clearInterval(bulletInterval);
-                        megaBullet.remove();
-                    }
-                }, 40);
-            }
-        }
-
         function createEnemy() {
-            let enemy = document.createElement("div");
-            enemy.classList.add("enemy");
-            enemy.style.left = Math.floor(Math.random() * 250) + "px";
+            let enemy = document.createElement("img");
+            enemy.className = "enemy";
+            enemy.src = "https://www.freeiconspng.com/uploads/airplane-png-10.png"; // Dushman samolyoti rasmi
+            enemy.style.left = Math.random() * 250 + "px";
             enemy.style.top = "0px";
             gameArea.appendChild(enemy);
-            moveEnemy(enemy);
-            enemySound.play();
-        }
-
-        function createSideEnemy() {
-            let enemy = document.createElement("div");
-            enemy.classList.add("enemy");
-            enemy.style.top = Math.floor(Math.random() * 350) + "px";
-            enemy.style.left = Math.random() < 0.5 ? "0px" : "250px"; 
-            gameArea.appendChild(enemy);
+            enemies.push(enemy);
             moveEnemy(enemy);
         }
 
         function moveEnemy(enemy) {
-            let interval = setInterval(() => {
-                let enemyY = parseInt(enemy.style.top);
-                if (enemyY < 370) {
-                    enemy.style.top = enemyY + 2 + "px";
-                } else {
-                    clearInterval(interval);
+            let enemyInterval = setInterval(() => {
+                let top = parseInt(enemy.style.top);
+                if (top >= 500) {
+                    clearInterval(enemyInterval);
                     enemy.remove();
+                } else {
+                    enemy.style.top = top + 5 + "px";
                 }
-                checkPlaneCollision();
             }, 100);
         }
 
-        setInterval(() => {
-            createEnemy();
-        }, enemySpeed);
+        function checkCollision() {
+            bullets.forEach((bullet, bIndex) => {
+                let bLeft = parseInt(bullet.style.left);
+                let bBottom = parseInt(bullet.style.bottom);
 
-        setInterval(() => {
-            createSideEnemy();
-        }, 5000);
+                enemies.forEach((enemy, eIndex) => {
+                    let eLeft = parseInt(enemy.style.left);
+                    let eTop = parseInt(enemy.style.top);
 
-        setInterval(() => {
-            enemySpeed -= 200; 
-            if (enemySpeed < 1000) enemySpeed = 1000;
-        }, 30000);
-
-        function checkBulletCollision(bullet, bulletInterval) {
-            document.querySelectorAll(".enemy").forEach(enemy => {
-                let bulletX = parseInt(bullet.style.left);
-                let bulletY = parseInt(bullet.style.bottom);
-                let enemyX = parseInt(enemy.style.left);
-                let enemyY = parseInt(enemy.style.top);
-
-                if (bulletX < enemyX + 50 && bulletX + 10 > enemyX &&
-                    bulletY < enemyY + 50 && bulletY + 20 > enemyY) {
-                    
-                    explosionSound.play();
-                    enemy.remove();
-                    clearInterval(bulletInterval);
-                    bullet.remove();
-                    
-                    score += 15;
-                    scoreDisplay.innerText = "Ball: " + score;
-                }
+                    if (bLeft > eLeft && bLeft < eLeft + 50 && bBottom > eTop && bBottom < eTop + 50) {
+                        bullet.remove();
+                        enemy.remove();
+                        bullets.splice(bIndex, 1);
+                        enemies.splice(eIndex, 1);
+                        score += 15;
+                        scoreDisplay.innerText = "Ball: " + score;
+                    }
+                });
             });
         }
+
+        function addScore() {
+            score += 5;
+            scoreDisplay.innerText = "Ball: " + score;
+        }
+
+        function gameLoop() {
+            checkCollision();
+            setTimeout(gameLoop, 50);
+        }
+
+        setInterval(createEnemy, 2000);
+        setInterval(addScore, 3000);
+        gameLoop();
     </script>
 
 </body>
