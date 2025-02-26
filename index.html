@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plane Game !</title>
+    <title>Samolyot O‘yini 🚀</title>
     <style>
         body {
             text-align: center;
@@ -13,7 +14,7 @@
             font-family: Arial, sans-serif;
         }
         #gameArea {
-            width: 300px;
+            width: 320px;
             height: 500px;
             border: 3px solid white;
             margin: auto;
@@ -26,7 +27,7 @@
             height: 60px;
             position: absolute;
             bottom: 10px;
-            left: 120px;
+            left: 130px;
         }
         .enemy {
             width: 50px;
@@ -44,7 +45,7 @@
             margin-top: 20px;
         }
         .control-btn {
-            width: 80px;
+            width: 90px;
             height: 50px;
             font-size: 18px;
             margin: 5px;
@@ -61,28 +62,46 @@
             font-size: 20px;
             margin-top: 10px;
         }
+        #restart {
+            display: none;
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
 
-    <h2>Samolyot O‘yini</h2>
+    <h2>🔥 Samolyot O‘yini 🚀</h2>
     <div id="score">Ball: 0</div>
     <div id="gameArea">
         <img id="plane" src="https://www.freeiconspng.com/uploads/fighter-jet-png-image-19.png" alt="Samolyot">
     </div>
-
     <div class="button-container">
         <button class="control-btn" onclick="moveLeft()">⬅️ Chap</button>
         <button class="control-btn" onclick="moveRight()">O‘ng ➡️</button>
         <button class="control-btn" onclick="fire()">🔥 Fire</button>
     </div>
+    <button id="restart" onclick="restartGame()">🔄 Qayta O‘ynash</button>
+
+    <audio id="fireSound" src="https://www.fesliyanstudios.com/play-mp3/387"></audio>
+    <audio id="explosionSound" src="https://www.fesliyanstudios.com/play-mp3/456"></audio>
 
     <script>
         let plane = document.getElementById("plane");
         let gameArea = document.getElementById("gameArea");
         let scoreDisplay = document.getElementById("score");
+        let restartButton = document.getElementById("restart");
+        let fireSound = document.getElementById("fireSound");
+        let explosionSound = document.getElementById("explosionSound");
+
         let score = 0;
-        let x = 120;
+        let x = 130;
         let bullets = [];
         let enemies = [];
 
@@ -94,13 +113,14 @@
         }
 
         function moveRight() {
-            if (x < 240) {
+            if (x < 260) {
                 x += 15;
                 plane.style.left = x + "px";
             }
         }
 
         function fire() {
+            fireSound.play();
             let bullet = document.createElement("div");
             bullet.className = "bullet";
             bullet.style.left = (x + 26) + "px";
@@ -139,6 +159,7 @@
                 if (top >= 500) {
                     clearInterval(enemyInterval);
                     enemy.remove();
+                    gameOver();
                 } else {
                     enemy.style.top = top + 5 + "px";
                 }
@@ -155,6 +176,7 @@
                     let eTop = parseInt(enemy.style.top);
 
                     if (bLeft > eLeft && bLeft < eLeft + 50 && bBottom > eTop && bBottom < eTop + 50) {
+                        explosionSound.play();
                         bullet.remove();
                         enemy.remove();
                         bullets.splice(bIndex, 1);
@@ -169,6 +191,15 @@
         function addScore() {
             score += 5;
             scoreDisplay.innerText = "Ball: " + score;
+        }
+
+        function gameOver() {
+            alert("O‘yin tugadi! Sizning ballingiz: " + score);
+            restartButton.style.display = "block";
+        }
+
+        function restartGame() {
+            location.reload();
         }
 
         function gameLoop() {
