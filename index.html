@@ -80,7 +80,193 @@
     <h2>🔥 Samolyot O‘yini 🚀</h2>
     <div id="score">Ball: 0</div>
     <div id="gameArea">
+        <img id="plane" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/F-22_Raptor_edit1_%28cropped%29.jpg/200px-F-22_Raptor_edit1_%28cropped%29.jpg" alt="Samolyot">
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samolyot O‘yini</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: url('https://wallpaperaccess.com/full/189332.jpg'); /* Chiroyli fon */
+            background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #gameArea {
+            width: 300px;
+            height: 500px;
+            border: 3px solid white;
+            margin: auto;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+        #plane {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            bottom: 10px;
+            left: 120px;
+        }
+        .enemy {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            top: 0;
+        }
+        .bullet {
+            width: 8px;
+            height: 20px;
+            background-color: red;
+            position: absolute;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .control-btn {
+            width: 80px;
+            height: 50px;
+            font-size: 18px;
+            margin: 5px;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+        .control-btn:active {
+            background-color: #ff5722;
+        }
+        #score {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Samolyot O‘yini</h2>
+    <div id="score">Ball: 0</div>
+    <div id="gameArea">
         <img id="plane" src="https://www.freeiconspng.com/uploads/fighter-jet-png-image-19.png" alt="Samolyot">
+    </div>
+
+    <div class="button-container">
+        <button class="control-btn" onclick="moveLeft()">⬅️ Chap</button>
+        <button class="control-btn" onclick="moveRight()">O‘ng ➡️</button>
+        <button class="control-btn" onclick="fire()">🔥 Fire</button>
+    </div>
+
+    <script>
+        let plane = document.getElementById("plane");
+        let gameArea = document.getElementById("gameArea");
+        let scoreDisplay = document.getElementById("score");
+        let score = 0;
+        let x = 120;
+        let bullets = [];
+        let enemies = [];
+
+        function moveLeft() {
+            if (x > 0) {
+                x -= 15;
+                plane.style.left = x + "px";
+            }
+        }
+
+        function moveRight() {
+            if (x < 240) {
+                x += 15;
+                plane.style.left = x + "px";
+            }
+        }
+
+        function fire() {
+            let bullet = document.createElement("div");
+            bullet.className = "bullet";
+            bullet.style.left = (x + 26) + "px";
+            bullet.style.bottom = "60px";
+            gameArea.appendChild(bullet);
+            bullets.push(bullet);
+            moveBullet(bullet);
+        }
+
+        function moveBullet(bullet) {
+            let bulletInterval = setInterval(() => {
+                let bottom = parseInt(bullet.style.bottom);
+                if (bottom >= 500) {
+                    clearInterval(bulletInterval);
+                    bullet.remove();
+                } else {
+                    bullet.style.bottom = bottom + 10 + "px";
+                }
+            }, 50);
+        }
+
+        function createEnemy() {
+            let enemy = document.createElement("img");
+            enemy.className = "enemy";
+            enemy.src = "https://www.freeiconspng.com/uploads/airplane-png-10.png"; // Dushman samolyoti rasmi
+            enemy.style.left = Math.random() * 250 + "px";
+            enemy.style.top = "0px";
+            gameArea.appendChild(enemy);
+            enemies.push(enemy);
+            moveEnemy(enemy);
+        }
+
+        function moveEnemy(enemy) {
+            let enemyInterval = setInterval(() => {
+                let top = parseInt(enemy.style.top);
+                if (top >= 500) {
+                    clearInterval(enemyInterval);
+                    enemy.remove();
+                } else {
+                    enemy.style.top = top + 5 + "px";
+                }
+            }, 100);
+        }
+
+        function checkCollision() {
+            bullets.forEach((bullet, bIndex) => {
+                let bLeft = parseInt(bullet.style.left);
+                let bBottom = parseInt(bullet.style.bottom);
+
+                enemies.forEach((enemy, eIndex) => {
+                    let eLeft = parseInt(enemy.style.left);
+                    let eTop = parseInt(enemy.style.top);
+
+                    if (bLeft > eLeft && bLeft < eLeft + 50 && bBottom > eTop && bBottom < eTop + 50) {
+                        bullet.remove();
+                        enemy.remove();
+                        bullets.splice(bIndex, 1);
+                        enemies.splice(eIndex, 1);
+                        score += 15;
+                        scoreDisplay.innerText = "Ball: " + score;
+                    }
+                });
+            });
+        }
+
+        function addScore() {
+            score += 5;
+            scoreDisplay.innerText = "Ball: " + score;
+        }
+
+        function gameLoop() {
+            checkCollision();
+            setTimeout(gameLoop, 50);
+        }
+
+        setInterval(createEnemy, 2000);
+        setInterval(addScore, 3000);
+        gameLoop();
+    </script>
+
+</body>
+</html>
+
     </div>
     <div class="button-container">
         <button class="control-btn" onclick="moveLeft()">⬅️ Chap</button>
