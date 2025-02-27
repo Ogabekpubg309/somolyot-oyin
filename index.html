@@ -7,7 +7,7 @@
     <style>
         body {
             text-align: center;
-            background-color: #1a1a1a;
+            background-color: #000;
             color: white;
             font-family: Arial, sans-serif;
         }
@@ -17,7 +17,8 @@
             border: 3px solid white;
             margin: auto;
             position: relative;
-            background-color: black;
+            background-image: url('https://wallpaperaccess.com/full/1113711.jpg');
+            background-size: cover;
             overflow: hidden;
         }
         #plane {
@@ -32,6 +33,7 @@
             height: 50px;
             position: absolute;
             top: 0;
+            transition: transform 0.1s;
         }
         .button-container {
             margin-top: 20px;
@@ -46,6 +48,7 @@
             border-radius: 5px;
             cursor: pointer;
             color: white;
+            transition: background 0.3s;
         }
         .control-btn:active {
             background-color: #ff5722;
@@ -64,6 +67,7 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            transition: background 0.3s;
         }
         #restartBtn:hover {
             background-color: darkred;
@@ -75,7 +79,7 @@
     <h2>Samolyot O‘yini</h2>
     <div id="score">Ball: 0</div>
     <div id="gameArea">
-        <img id="plane" src="https://www.pngmart.com/files/7/Rocket-PNG-Transparent-Picture.png" alt="Samolyot">
+        <img id="plane" src="https://www.pngmart.com/files/7/Jet-PNG-Picture.png" alt="Samolyot">
     </div>
 
     <div class="button-container">
@@ -122,6 +126,7 @@
             bullet.style.position = "absolute";
             bullet.style.left = (x + 26) + "px";
             bullet.style.bottom = "60px";
+            bullet.style.transition = "bottom 0.3s linear";
             gameArea.appendChild(bullet);
 
             let bulletInterval = setInterval(() => {
@@ -139,7 +144,7 @@
 
             let enemy = document.createElement("img");
             enemy.className = "enemy";
-            enemy.src = "https://cdn-icons-png.flaticon.com/512/1688/1688799.png"; // Yangi dushman rasmi
+            enemy.src = "https://www.pngmart.com/files/7/Drone-PNG-Image.png";
             enemy.style.left = Math.random() * 250 + "px";
             enemy.style.top = "0px";
             gameArea.appendChild(enemy);
